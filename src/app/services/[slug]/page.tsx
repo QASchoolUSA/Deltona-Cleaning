@@ -54,7 +54,7 @@ export default async function ServiceDetailPage({ params }: Props) {
                                     <Link href="/contact">Get a Free Quote</Link>
                                 </Button>
                                 <Button size="lg" variant="outline" asChild>
-                                    <Link href="tel:+13860000000">Call (386) 000-0000</Link>
+                                    <Link href="tel:+16893882588">Call (689) 388-2588</Link>
                                 </Button>
                             </div>
                         </div>
@@ -167,7 +167,7 @@ export default async function ServiceDetailPage({ params }: Props) {
                                         <Link href="/contact?service={service.slug}">Get a Free Quote</Link>
                                     </Button>
                                     <Button variant="outline" className="w-full text-lg h-12" asChild>
-                                        <Link href="tel:+13860000000">Call (386) 000-0000</Link>
+                                        <Link href="tel:+16893882588">Call (689) 388-2588</Link>
                                     </Button>
                                 </div>
                                 <div className="mt-6 text-xs text-center text-muted-foreground">

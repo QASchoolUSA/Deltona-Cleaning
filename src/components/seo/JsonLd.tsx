@@ -4,7 +4,7 @@ export function JsonLd() {
         "@type": "LocalBusiness",
         "name": "Deltona Cleaning",
         "image": "https://deltonacleaning.com/logo.png", // Placeholder
-        "telephone": "(386) 000-0000",
+        "telephone": "(689) 388-2588",
         "email": "info@deltonacleaning.com",
         "address": {
             "@type": "PostalAddress",
