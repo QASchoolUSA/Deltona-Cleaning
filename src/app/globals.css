@@ -22,6 +22,10 @@
 
   --color-muted: #f1f5f9;
   --color-muted-foreground: #64748b;
+
+  --color-border: #e2e8f0;
+  --color-input: #e2e8f0;
+  --color-ring: #0284c7;
 }
 
 :root {
@@ -57,4 +61,43 @@ body {
   .section-padding {
     @apply py-16 sm:py-24;
   }
+}
+
+/* Hero & section typography */
+.section-eyebrow {
+  @apply text-xs font-semibold uppercase tracking-widest text-primary;
+}
+
+.gradient-hero {
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--color-primary) 8%, transparent) 0%,
+    var(--color-background) 45%,
+    color-mix(in srgb, var(--color-secondary) 6%, transparent) 100%
+  );
+}
+
+/* Booking widget */
+.booking-card {
+  @apply rounded-2xl border border-border/80 bg-background;
+}
+
+.btn-booking-primary {
+  @apply inline-flex items-center justify-center rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm transition hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:pointer-events-none disabled:opacity-50;
+}
+
+.btn-booking-ghost {
+  @apply inline-flex items-center justify-center rounded-full border border-border bg-background px-5 py-2.5 text-sm font-semibold text-foreground transition hover:border-primary/30 hover:bg-muted focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:pointer-events-none disabled:opacity-40;
+}
+
+.input-field {
+  @apply w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm text-foreground transition placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-50;
+}
+
+.select-field {
+  @apply w-full appearance-none rounded-xl border border-border bg-background px-4 py-2.5 pr-10 text-sm text-foreground transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-50;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-size: 1.25rem;
+  background-position: right 0.75rem center;
+  background-repeat: no-repeat;
 }

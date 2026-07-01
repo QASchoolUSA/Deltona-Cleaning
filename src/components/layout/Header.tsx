@@ -51,7 +51,7 @@ export function Header() {
                             </Link>
                         ))}
                         <Button asChild>
-                            <Link href="/contact">Get a Quote</Link>
+                            <Link href="/#booking">Get a Quote</Link>
                         </Button>
                     </nav>
 
@@ -92,7 +92,7 @@ export function Header() {
                         ))}
                         <div className="mt-4 px-3">
                             <Button className="w-full" asChild>
-                                <Link href="/contact">Get a Quote</Link>
+                                <Link href="/#booking">Get a Quote</Link>
                             </Button>
                         </div>
                     </div>

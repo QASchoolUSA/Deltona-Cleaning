@@ -13,7 +13,7 @@ export function CTA() {
                     </p>
                     <div className="mt-8 flex justify-center gap-4">
                         <Button size="lg" variant="secondary" asChild>
-                            <Link href="/contact">Get Your Free Quote</Link>
+                            <Link href="/#booking">Get Your Free Quote</Link>
                         </Button>
                         <Button size="lg" variant="outline" className="bg-transparent text-primary-foreground border-primary-foreground hover:bg-primary-foreground hover:text-primary" asChild>
                             <Link href="tel:+16893882588">Call (689) 388-2588</Link>

@@ -5,6 +5,7 @@ import { Check, ArrowLeft, CheckCircle2, HelpCircle } from "lucide-react"
 import { services } from "@/lib/data"
 import { notFound } from "next/navigation"
 import { Metadata } from "next"
+import BookingWidget from "@/components/BookingWidget"
 
 interface Props {
     params: Promise<{ slug: string }>
@@ -49,9 +50,9 @@ export default async function ServiceDetailPage({ params }: Props) {
                             <p className="text-xl text-muted-foreground mb-8">
                                 {service.description}
                             </p>
-                            <div className="flex gap-4">
+                            <div className="flex flex-wrap gap-4">
                                 <Button size="lg" asChild>
-                                    <Link href="/contact">Get a Free Quote</Link>
+                                    <Link href="/#booking">Get Your Free Quote</Link>
                                 </Button>
                                 <Button size="lg" variant="outline" asChild>
                                     <Link href="tel:+16893882588">Call (689) 388-2588</Link>
@@ -155,24 +156,10 @@ export default async function ServiceDetailPage({ params }: Props) {
 
                         </div>
 
-                        {/* Sidebar CTA */}
+                        {/* Sidebar booking widget */}
                         <div className="lg:col-span-1">
-                            <div className="bg-muted border rounded-xl p-8 sticky top-24 shadow-sm">
-                                <h3 className="text-2xl font-bold mb-4">Ready for a cleaner home?</h3>
-                                <p className="text-muted-foreground mb-8">
-                                    Get a free, no-obligation quote for our {service.shortTitle || service.title} today.
-                                </p>
-                                <div className="space-y-4">
-                                    <Button className="w-full text-lg h-12" size="lg" asChild>
-                                        <Link href="/contact?service={service.slug}">Get a Free Quote</Link>
-                                    </Button>
-                                    <Button variant="outline" className="w-full text-lg h-12" asChild>
-                                        <Link href="tel:+16893882588">Call (689) 388-2588</Link>
-                                    </Button>
-                                </div>
-                                <div className="mt-6 text-xs text-center text-muted-foreground">
-                                    Licensed & Insured • Satisfaction Guaranteed
-                                </div>
+                            <div className="sticky top-24">
+                                <BookingWidget />
                             </div>
                         </div>
                     </div>
@@ -185,7 +172,7 @@ export default async function ServiceDetailPage({ params }: Props) {
                     <div className="text-center max-w-2xl mx-auto">
                         <h2 className="text-3xl font-bold mb-6">Don't wait. Book your {service.shortTitle || "clean"} today!</h2>
                         <Button size="lg" variant="secondary" asChild>
-                            <Link href="/contact">Schedule Now</Link>
+                            <Link href="/#booking">Get Your Free Quote</Link>
                         </Button>
                     </div>
                 </Container>
