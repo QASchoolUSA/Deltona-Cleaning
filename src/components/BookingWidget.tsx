@@ -8,6 +8,7 @@ import {
   type ServiceType,
 } from "@/lib/pricing";
 import { cn } from "@/lib/utils";
+import { SITE_EMAIL, SITE_PHONE, SITE_PHONE_HREF } from "@/lib/site";
 
 type SizeOption = { key: string; label: string };
 
@@ -48,10 +49,6 @@ const ADDON_LABELS: Record<string, string> = {
 type LevelType = "standard" | "deep" | "move" | "post";
 
 const STEPS = ["Service", "Options", "Schedule", "Contact", "Review"] as const;
-
-const CONTACT_EMAIL = "info@deltonacleaning.com";
-const CONTACT_PHONE = "(689) 388-2588";
-const CONTACT_PHONE_HREF = "tel:+16893882588";
 
 type ContactErrors = Partial<Record<"name" | "email" | "phone" | "address", string>>;
 
@@ -154,7 +151,7 @@ export default function BookingWidget({ className }: { className?: string }) {
         `$${quote.price} (range $${quote.range.low}–$${quote.range.high})\n\n` +
         `Notes:`
     );
-    return `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
+    return `mailto:${SITE_EMAIL}?subject=${subject}&body=${body}`;
   }, [
     serviceLabel,
     sizeLabel,
@@ -266,8 +263,8 @@ export default function BookingWidget({ className }: { className?: string }) {
           </div>
           <p className="text-sm text-muted-foreground">
             Questions? Call us at{" "}
-            <a href={CONTACT_PHONE_HREF} className="font-semibold text-primary hover:underline">
-              {CONTACT_PHONE}
+            <a href={SITE_PHONE_HREF} className="font-semibold text-primary hover:underline">
+              {SITE_PHONE}
             </a>
             .
           </p>

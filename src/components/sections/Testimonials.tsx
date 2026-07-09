@@ -1,7 +1,6 @@
 import { Star } from "lucide-react"
 import { Container } from "@/components/ui/container"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
-import { cn } from "@/lib/utils"
 
 const testimonials = [
     {

@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -12,27 +13,31 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: {
-    template: "%s | Deltona Cleaning",
-    default: "Deltona Cleaning - Professional House Cleaning Services",
+    template: `%s | ${SITE_NAME}`,
+    default: "House Cleaning in Deltona, FL | Licensed & Insured",
   },
-  description: "Top-rated cleaning company in Deltona, FL. Offering house cleaning, deep cleaning, move-out cleaning, and more. Licensed & Insured. Get a free quote!",
-  keywords: ["house cleaning deltona", "cleaning services deltona fl", "maid service", "move out cleaning", "deep cleaning"],
+  description: SITE_DESCRIPTION,
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
-    title: "Deltona Cleaning - Professional House Cleaning Services",
-    description: "Reliable and affordable cleaning services in Deltona, FL.",
-    url: "https://deltonacleaning.com",
-    siteName: "Deltona Cleaning",
+    title: "House Cleaning in Deltona, FL | Deltona Cleaning",
+    description: SITE_DESCRIPTION,
+    url: "/",
+    siteName: SITE_NAME,
     locale: "en_US",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Deltona Cleaning",
-    description: "Professional cleaning services in Deltona, FL",
+    title: "House Cleaning in Deltona, FL | Deltona Cleaning",
+    description: SITE_DESCRIPTION,
   },
-  icons: {
-    icon: "/favicon.ico",
+  robots: {
+    index: true,
+    follow: true,
   },
 };
 
