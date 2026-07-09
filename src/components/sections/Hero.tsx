@@ -1,8 +1,17 @@
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
-import BookingWidget from "@/components/BookingWidget";
+
+const BookingWidget = dynamic(() => import("@/components/BookingWidget"), {
+  loading: () => (
+    <div
+      className="mx-auto h-[520px] w-full max-w-lg animate-pulse rounded-2xl border border-border/60 bg-muted/60 shadow-xl shadow-primary/5"
+      aria-hidden="true"
+    />
+  ),
+});
 
 const TRUST_ITEMS = [
   "Licensed & Insured",
@@ -34,7 +43,10 @@ export function Hero() {
 
             <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-3">
               {TRUST_ITEMS.map((item) => (
-                <li key={item} className="flex items-center gap-2 text-sm font-medium text-foreground/80">
+                <li
+                  key={item}
+                  className="flex items-center gap-2 text-sm font-medium text-foreground/80"
+                >
                   <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary/10 text-primary">
                     <Check className="h-3 w-3" strokeWidth={3} />
                   </span>

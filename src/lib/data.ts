@@ -1,4 +1,4 @@
-import { Home, Sparkles, Truck, Building2, CalendarRange, CheckCircle2, HelpCircle } from "lucide-react"
+import { Home, Sparkles, Truck, Building2, CalendarRange } from "lucide-react"
 
 export const services = [
     {
@@ -6,7 +6,7 @@ export const services = [
         title: "House Cleaning Services",
         shortTitle: "House Cleaning",
         description: "Reliable weekly, bi-weekly, or monthly house cleaning services in Deltona, FL. Keep your home fresh and tidy with our professional maids.",
-        fullDescription: "Life gets busy, and keeping your home consistent clean can be a challenge. Our recurring house cleaning service is designed to take that burden off your shoulders. We provide reliable, thorough, and affordable cleaning solutions tailored to your schedule and specific needs. whether you need weekly, bi-weekly, or monthly visits, our team ensures your home remains a sanctuary of cleanliness and comfort.",
+        fullDescription: "Life gets busy, and keeping your home consistently clean can be a challenge. Our recurring house cleaning service is designed to take that burden off your shoulders. We provide reliable, thorough, and affordable cleaning solutions tailored to your schedule and specific needs. Whether you need weekly, bi-weekly, or monthly visits, our team ensures your home remains a sanctuary of cleanliness and comfort.",
         icon: Home,
         features: [
             "Dusting all surfaces, furniture, and fixtures",
