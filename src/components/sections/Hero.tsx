@@ -1,8 +1,10 @@
 import Link from "next/link";
+import Image from "next/image";
 import dynamic from "next/dynamic";
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
+import { pageImages } from "@/lib/images";
 
 const BookingWidget = dynamic(() => import("@/components/BookingWidget"), {
   loading: () => (
@@ -20,10 +22,28 @@ const TRUST_ITEMS = [
 ];
 
 export function Hero() {
+  const hero = pageImages.homeHero;
+
   return (
-    <section className="gradient-hero relative overflow-hidden">
-      <div className="pointer-events-none absolute -right-24 -top-24 h-96 w-96 rounded-full bg-primary/10 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-32 -left-32 h-80 w-80 rounded-full bg-secondary/10 blur-3xl" />
+    <section className="relative overflow-hidden">
+      <div className="absolute inset-0">
+        <Image
+          src={hero.src}
+          alt={hero.alt}
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center"
+        />
+        <div
+          className="absolute inset-0 bg-gradient-to-r from-background via-background/92 to-background/70"
+          aria-hidden="true"
+        />
+        <div
+          className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-background/30"
+          aria-hidden="true"
+        />
+      </div>
 
       <Container className="relative py-12 md:py-20 lg:py-24">
         <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-2 lg:gap-14 xl:gap-16">

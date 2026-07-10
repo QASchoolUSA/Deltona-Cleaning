@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,6 +16,7 @@ import {
   SITE_PHONE_HREF,
 } from "@/lib/site";
 import { services } from "@/lib/data";
+import { pageImages } from "@/lib/images";
 
 const SERVICE_OPTIONS = [
   ...services.map((s) => ({ value: s.slug, label: s.shortTitle })),
@@ -123,6 +125,16 @@ export default function ContactPageClient() {
                     </p>
                   </div>
                 </div>
+              </div>
+
+              <div className="relative aspect-[4/3] overflow-hidden rounded-xl border bg-muted">
+                <Image
+                  src={pageImages.contact.src}
+                  alt={pageImages.contact.alt}
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  className="object-cover"
+                />
               </div>
 
               <div className="overflow-hidden rounded-lg border bg-muted">

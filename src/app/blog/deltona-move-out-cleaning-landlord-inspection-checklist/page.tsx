@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
 import { JsonLd } from "@/components/seo/JsonLd";
@@ -10,6 +11,8 @@ import {
 } from "@/lib/seo/schema";
 import { SITE_NAME, SITE_PHONE, SITE_PHONE_HREF } from "@/lib/site";
 import { getServiceBySlug } from "@/lib/data";
+import { pageImages } from "@/lib/images";
+import { ContentImage } from "@/components/ui/content-image";
 
 const PATH = "/blog/deltona-move-out-cleaning-landlord-inspection-checklist";
 const TITLE =
@@ -119,8 +122,22 @@ export default function MoveOutChecklistArticlePage() {
       {faqSchema && <JsonLd data={faqSchema} />}
       <JsonLd data={breadcrumbSchema} />
 
-      <header className="bg-muted py-12 md:py-20">
-        <Container className="max-w-3xl">
+      <header className="relative overflow-hidden">
+        <div className="absolute inset-0">
+          <Image
+            src={pageImages.blogMoveOut.src}
+            alt={pageImages.blogMoveOut.alt}
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover"
+          />
+          <div
+            className="absolute inset-0 bg-gradient-to-r from-background via-background/92 to-background/65"
+            aria-hidden="true"
+          />
+        </div>
+        <Container className="relative max-w-3xl py-12 md:py-20">
           <p className="text-sm font-medium text-primary mb-3">
             Move-Out Cleaning · Deltona, FL · Property Managers
           </p>
@@ -135,6 +152,13 @@ export default function MoveOutChecklistArticlePage() {
 
       <div className="py-12 md:py-16">
         <Container className="max-w-3xl space-y-12">
+          <ContentImage
+            src={pageImages.blogMoveOut.src}
+            alt={pageImages.blogMoveOut.alt}
+            aspect="wide"
+            sizes="(max-width: 768px) 100vw, 768px"
+          />
+
           <section>
             <h2 className="text-2xl font-bold mb-4">
               What Do Deltona Landlords and Property Managers Check on a Move-Out

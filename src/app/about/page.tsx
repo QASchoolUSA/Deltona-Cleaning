@@ -11,6 +11,8 @@ import {
 } from "@/lib/seo/schema";
 import { SITE_AREAS, SITE_NAME, SITE_PHONE, SITE_PHONE_HREF } from "@/lib/site";
 import { services } from "@/lib/data";
+import { pageImages } from "@/lib/images";
+import { ContentImage } from "@/components/ui/content-image";
 
 export const metadata: Metadata = {
   title: "About Deltona Cleaning | Local Licensed Team",
@@ -59,6 +61,7 @@ export default function AboutPage() {
     { name: "Home", path: "/" },
     { name: "About", path: "/about" },
   ]);
+  const aboutImage = pageImages.about;
 
   return (
     <div className="flex flex-col">
@@ -67,9 +70,7 @@ export default function AboutPage() {
 
       <section className="bg-muted py-12 md:py-20">
         <Container>
-          <p className="text-sm font-medium text-primary mb-3">
-            {CORE_ENTITY}
-          </p>
+          <p className="text-sm font-medium text-primary mb-3">{CORE_ENTITY}</p>
           <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl mb-4">
             About {SITE_NAME}
           </h1>
@@ -82,7 +83,7 @@ export default function AboutPage() {
 
       <section className="py-16 md:py-24">
         <Container>
-          <div className="grid gap-12 md:grid-cols-2 lg:gap-16 items-start">
+          <div className="grid gap-12 md:grid-cols-2 lg:gap-16 items-center">
             <div className="space-y-6">
               <h2 className="text-3xl font-bold">Our Mission</h2>
               <p className="text-lg text-muted-foreground">
@@ -106,9 +107,23 @@ export default function AboutPage() {
                 </Button>
               </div>
             </div>
-            <div className="rounded-xl border bg-muted/40 p-8 space-y-4">
-              <h2 className="text-xl font-bold">What we clean</h2>
-              <ul className="space-y-2 text-sm text-muted-foreground">
+            <ContentImage
+              src={aboutImage.src}
+              alt={aboutImage.alt}
+              aspect="photo"
+              priority
+              sizes="(max-width: 768px) 100vw, 50vw"
+            />
+          </div>
+        </Container>
+      </section>
+
+      <section className="bg-muted/50 py-16 md:py-24">
+        <Container>
+          <div className="grid gap-10 lg:grid-cols-2 items-start mb-12">
+            <div>
+              <h2 className="text-3xl font-bold mb-4">What we clean</h2>
+              <ul className="space-y-2 text-muted-foreground">
                 {SUB_ENTITIES.map((entity) => (
                   <li key={entity} className="flex gap-2">
                     <span className="text-primary">•</span>
@@ -116,33 +131,31 @@ export default function AboutPage() {
                   </li>
                 ))}
               </ul>
-              <p className="text-sm pt-2">
+              <p className="text-sm pt-4">
                 <Link href="/services" className="text-primary font-medium hover:underline">
                   View all {services.length} services →
                 </Link>
               </p>
             </div>
-          </div>
-        </Container>
-      </section>
-
-      <section className="bg-muted/50 py-16 md:py-24">
-        <Container>
-          <h2 className="text-3xl font-bold mb-4 text-center">Who we serve</h2>
-          <p className="text-muted-foreground text-center max-w-2xl mx-auto mb-10">
-            One local team, five buyer contexts—each with its own checklist and success metric.
-          </p>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {audiences.map((item) => (
-              <Link
-                key={item.title}
-                href={item.href}
-                className="rounded-lg border bg-background p-6 hover:border-primary transition-colors"
-              >
-                <h3 className="font-bold text-lg mb-2">{item.title}</h3>
-                <p className="text-sm text-muted-foreground">{item.body}</p>
-              </Link>
-            ))}
+            <div>
+              <h2 className="text-3xl font-bold mb-4">Who we serve</h2>
+              <p className="text-muted-foreground mb-6">
+                One local team, five buyer contexts—each with its own checklist and success
+                metric.
+              </p>
+              <div className="grid gap-4 sm:grid-cols-2">
+                {audiences.map((item) => (
+                  <Link
+                    key={item.title}
+                    href={item.href}
+                    className="rounded-lg border bg-background p-5 hover:border-primary transition-colors"
+                  >
+                    <h3 className="font-bold mb-1">{item.title}</h3>
+                    <p className="text-sm text-muted-foreground">{item.body}</p>
+                  </Link>
+                ))}
+              </div>
+            </div>
           </div>
         </Container>
       </section>
@@ -150,9 +163,7 @@ export default function AboutPage() {
       <section className="py-16">
         <Container className="text-center max-w-2xl">
           <h2 className="text-2xl font-bold mb-4">Service area</h2>
-          <p className="text-muted-foreground mb-6">
-            {SITE_AREAS.join(" · ")}
-          </p>
+          <p className="text-muted-foreground mb-6">{SITE_AREAS.join(" · ")}</p>
           <Button asChild>
             <Link href="/contact">Contact {SITE_NAME}</Link>
           </Button>
