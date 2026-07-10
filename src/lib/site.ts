@@ -16,4 +16,4 @@ export const SITE_AREAS = [
 ] as const;
 
 export const SITE_DESCRIPTION =
-  "Professional house cleaning, deep cleaning, and move-out cleaning in Deltona, FL. Licensed & insured. Instant online quote — pay after your clean.";
+  "Professional house, apartment, move-out, Airbnb, post-construction, office, and restaurant cleaning in Deltona, FL. Licensed & insured. Instant online quote — pay after your clean.";

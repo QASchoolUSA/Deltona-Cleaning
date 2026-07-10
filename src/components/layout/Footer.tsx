@@ -17,8 +17,8 @@ export function Footer() {
           <div className="space-y-4">
             <h3 className="text-lg font-bold text-foreground">{SITE_NAME}</h3>
             <p className="text-sm">
-              Professional residential and commercial cleaning services in Deltona, FL and
-              surrounding areas.
+              Professional house, move-out, Airbnb, post-construction, office, and restaurant
+              cleaning in Deltona, FL and surrounding Volusia County communities.
             </p>
           </div>
 
@@ -46,6 +46,19 @@ export function Footer() {
               <li>
                 <Link href="/services" className="hover:text-primary">
                   All Services
+                </Link>
+              </li>
+              <li>
+                <Link href="/blog" className="hover:text-primary">
+                  Cleaning Guides
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/blog/deltona-move-out-cleaning-landlord-inspection-checklist"
+                  className="hover:text-primary"
+                >
+                  Move-Out Checklist
                 </Link>
               </li>
               <li>

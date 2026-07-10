@@ -3,11 +3,16 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { Check, ArrowLeft, CheckCircle2, HelpCircle } from "lucide-react";
-import { services } from "@/lib/data";
+import { getServiceBySlug, services } from "@/lib/data";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { SITE_NAME, SITE_URL } from "@/lib/site";
+import { SITE_NAME, SITE_PHONE, SITE_PHONE_HREF, SITE_URL } from "@/lib/site";
+import {
+  buildBreadcrumbSchema,
+  buildFaqSchema,
+  buildServiceSchema,
+} from "@/lib/seo/schema";
 
 const BookingWidget = dynamic(() => import("@/components/BookingWidget"), {
   loading: () => (
@@ -24,7 +29,7 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const service = services.find((s) => s.slug === slug);
+  const service = getServiceBySlug(slug);
   if (!service) return { title: "Service Not Found" };
 
   const title = `${service.shortTitle} in Deltona, FL`;
@@ -57,48 +62,30 @@ export async function generateStaticParams() {
 
 export default async function ServiceDetailPage({ params }: Props) {
   const { slug } = await params;
-  const service = services.find((s) => s.slug === slug);
+  const service = getServiceBySlug(slug);
 
   if (!service) {
     notFound();
   }
 
-  const serviceSchema = {
-    "@context": "https://schema.org",
-    "@type": "Service",
-    name: service.title,
-    serviceType: service.shortTitle,
-    description: service.description,
-    url: `${SITE_URL}/services/${service.slug}`,
-    provider: { "@id": `${SITE_URL}/#business` },
-    areaServed: {
-      "@type": "City",
-      name: "Deltona, FL",
-    },
-  };
+  const related = service.relatedSlugs
+    .map((relatedSlug) => getServiceBySlug(relatedSlug))
+    .filter(Boolean);
 
-  const faqSchema =
-    service.faqs && service.faqs.length > 0
-      ? {
-          "@context": "https://schema.org",
-          "@type": "FAQPage",
-          mainEntity: service.faqs.map((faq) => ({
-            "@type": "Question",
-            name: faq.question,
-            acceptedAnswer: {
-              "@type": "Answer",
-              text: faq.answer,
-            },
-          })),
-        }
-      : null;
+  const serviceSchema = buildServiceSchema(service);
+  const faqSchema = buildFaqSchema(service.faqs);
+  const breadcrumbSchema = buildBreadcrumbSchema([
+    { name: "Home", path: "/" },
+    { name: "Services", path: "/services" },
+    { name: service.shortTitle, path: `/services/${service.slug}` },
+  ]);
 
   return (
     <div className="flex flex-col">
       <JsonLd data={serviceSchema} />
       {faqSchema && <JsonLd data={faqSchema} />}
+      <JsonLd data={breadcrumbSchema} />
 
-      {/* Hero Section */}
       <section className="bg-muted py-16 md:py-24">
         <Container>
           <div className="flex flex-col md:flex-row items-start justify-between gap-8">
@@ -109,6 +96,9 @@ export default async function ServiceDetailPage({ params }: Props) {
               >
                 <ArrowLeft className="mr-2 h-4 w-4" /> Back to Services
               </Link>
+              <p className="text-sm font-medium text-primary mb-3">
+                Deltona, FL · {service.audiences.join(" · ")}
+              </p>
               <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl mb-6">
                 {service.title}
               </h1>
@@ -118,7 +108,7 @@ export default async function ServiceDetailPage({ params }: Props) {
                   <Link href="/#booking">Get Your Free Quote</Link>
                 </Button>
                 <Button size="lg" variant="outline" asChild>
-                  <Link href="tel:+16893882588">Call (689) 388-2588</Link>
+                  <a href={SITE_PHONE_HREF}>Call {SITE_PHONE}</a>
                 </Button>
               </div>
             </div>
@@ -131,11 +121,21 @@ export default async function ServiceDetailPage({ params }: Props) {
         </Container>
       </section>
 
-      {/* Main Content */}
       <section className="py-16 md:py-24">
         <Container>
           <div className="grid gap-16 lg:grid-cols-3">
             <div className="lg:col-span-2 space-y-16">
+              {service.aiOverview && (
+                <div>
+                  <h2 className="text-3xl font-bold mb-6">
+                    What Is {service.shortTitle} in Deltona, FL?
+                  </h2>
+                  <p className="text-lg text-foreground leading-relaxed border-l-4 border-primary pl-4">
+                    {service.aiOverview}
+                  </p>
+                </div>
+              )}
+
               <div>
                 <h2 className="text-3xl font-bold mb-6">Overview</h2>
                 <p className="text-lg text-muted-foreground leading-relaxed">
@@ -147,8 +147,8 @@ export default async function ServiceDetailPage({ params }: Props) {
                 <div>
                   <h2 className="text-3xl font-bold mb-8">Why Choose This Service?</h2>
                   <div className="grid gap-6 sm:grid-cols-2">
-                    {service.benefits.map((benefit, idx) => (
-                      <div key={idx} className="bg-muted/30 p-6 rounded-lg border">
+                    {service.benefits.map((benefit) => (
+                      <div key={benefit.title} className="bg-muted/30 p-6 rounded-lg border">
                         <h3 className="font-semibold text-lg mb-2 flex items-center gap-2">
                           <CheckCircle2 className="h-5 w-5 text-green-500" />
                           {benefit.title}
@@ -163,8 +163,8 @@ export default async function ServiceDetailPage({ params }: Props) {
               <div>
                 <h2 className="text-3xl font-bold mb-8">What&apos;s Included</h2>
                 <ul className="grid gap-4 sm:grid-cols-2">
-                  {service.features.map((feature, index) => (
-                    <li key={index} className="flex items-start">
+                  {service.features.map((feature) => (
+                    <li key={feature} className="flex items-start">
                       <div className="mr-3 inline-flex h-6 w-6 items-center justify-center rounded-full bg-primary/10 text-primary mt-0.5">
                         <Check className="h-4 w-4" />
                       </div>
@@ -174,12 +174,96 @@ export default async function ServiceDetailPage({ params }: Props) {
                 </ul>
               </div>
 
+              {service.failPoints && service.failPoints.length > 0 && (
+                <div>
+                  <h2 className="text-3xl font-bold mb-4">
+                    Deltona Move-Out Fail Points Landlords Catch
+                  </h2>
+                  <p className="text-muted-foreground mb-6">
+                    Based on Deltona Cleaning vacancy turns across Deltona and Volusia County
+                    rentals (2024–2026 operational pattern). Cleaning reduces cleaning-related
+                    deductions; it does not legally guarantee deposit return.
+                  </p>
+                  <div className="overflow-x-auto rounded-lg border">
+                    <table className="w-full text-sm">
+                      <thead className="bg-muted text-left">
+                        <tr>
+                          <th className="p-3 font-semibold">Fail zone</th>
+                          <th className="p-3 font-semibold">Fail rate</th>
+                          <th className="p-3 font-semibold">Typical reaction</th>
+                          <th className="p-3 font-semibold">Fix add-on</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {service.failPoints.map((row) => (
+                          <tr key={row.zone} className="border-t">
+                            <td className="p-3 font-medium text-foreground">{row.zone}</td>
+                            <td className="p-3 text-muted-foreground">{row.failRate}</td>
+                            <td className="p-3 text-muted-foreground">{row.typicalReaction}</td>
+                            <td className="p-3 text-muted-foreground">{row.fixAddOn}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  <p className="mt-4 text-sm">
+                    <Link
+                      href="/blog/deltona-move-out-cleaning-landlord-inspection-checklist"
+                      className="text-primary font-medium hover:underline"
+                    >
+                      Read the full landlord inspection checklist →
+                    </Link>
+                  </p>
+                </div>
+              )}
+
+              {service.pricingTiers && service.pricingTiers.length > 0 && (
+                <div>
+                  <h2 className="text-3xl font-bold mb-4">
+                    Time-on-Site Benchmarks by Unit Size
+                  </h2>
+                  <p className="text-muted-foreground mb-6">
+                    Light = recently maintained vacant unit. Standard = typical turnover.
+                    Heavy = neglected, pet, or long-vacancy condition.
+                  </p>
+                  <div className="overflow-x-auto rounded-lg border">
+                    <table className="w-full text-sm">
+                      <thead className="bg-muted text-left">
+                        <tr>
+                          <th className="p-3 font-semibold">Unit</th>
+                          <th className="p-3 font-semibold">Light</th>
+                          <th className="p-3 font-semibold">Standard</th>
+                          <th className="p-3 font-semibold">Heavy</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {service.pricingTiers.map((row) => (
+                          <tr key={row.unit} className="border-t">
+                            <td className="p-3 font-medium text-foreground">{row.unit}</td>
+                            <td className="p-3 text-muted-foreground">{row.light}</td>
+                            <td className="p-3 text-muted-foreground">{row.standard}</td>
+                            <td className="p-3 text-muted-foreground">{row.heavy}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {service.slaNote && (
+                <div className="rounded-lg border bg-muted/40 p-6">
+                  <h2 className="text-2xl font-bold mb-3">Property Manager SLA</h2>
+                  <p className="text-muted-foreground leading-relaxed">{service.slaNote}</p>
+                </div>
+              )}
+
               {service.process && (
                 <div>
                   <h2 className="text-3xl font-bold mb-8">Our Process</h2>
                   <div className="space-y-8">
-                    {service.process.map((step, idx) => (
-                      <div key={idx} className="flex gap-4">
+                    {service.process.map((step) => (
+                      <div key={step.step} className="flex gap-4">
                         <div className="flex-none flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold">
                           {step.step}
                         </div>
@@ -197,8 +281,8 @@ export default async function ServiceDetailPage({ params }: Props) {
                 <div>
                   <h2 className="text-3xl font-bold mb-8">Frequently Asked Questions</h2>
                   <div className="space-y-6">
-                    {service.faqs.map((faq, idx) => (
-                      <div key={idx} className="border-b pb-6 last:border-0">
+                    {service.faqs.map((faq) => (
+                      <div key={faq.question} className="border-b pb-6 last:border-0">
                         <h3 className="font-semibold text-lg mb-2 flex items-center gap-2">
                           <HelpCircle className="h-5 w-5 text-muted-foreground" />
                           {faq.question}
@@ -209,11 +293,51 @@ export default async function ServiceDetailPage({ params }: Props) {
                   </div>
                 </div>
               )}
+
+              {related.length > 0 && (
+                <div>
+                  <h2 className="text-3xl font-bold mb-6">Related Cleaning Services</h2>
+                  <ul className="grid gap-4 sm:grid-cols-2">
+                    {related.map((item) =>
+                      item ? (
+                        <li key={item.slug}>
+                          <Link
+                            href={`/services/${item.slug}`}
+                            className="block rounded-lg border p-4 hover:border-primary hover:bg-muted/40 transition-colors"
+                          >
+                            <span className="font-semibold text-foreground">
+                              {item.shortTitle} in Deltona
+                            </span>
+                            <p className="mt-1 text-sm text-muted-foreground line-clamp-2">
+                              {item.description}
+                            </p>
+                          </Link>
+                        </li>
+                      ) : null
+                    )}
+                  </ul>
+                </div>
+              )}
             </div>
 
             <div className="lg:col-span-1">
-              <div className="sticky top-24">
+              <div className="sticky top-24 space-y-6">
                 <BookingWidget />
+                <div className="rounded-lg border p-4 text-sm text-muted-foreground">
+                  <p className="font-semibold text-foreground mb-2">Serving</p>
+                  <p>Deltona, DeBary, Orange City, and Lake Helen, FL.</p>
+                  <p className="mt-3">
+                    <a href={SITE_PHONE_HREF} className="text-primary font-medium hover:underline">
+                      {SITE_PHONE}
+                    </a>
+                  </p>
+                  <p className="mt-1">
+                    <Link href="/contact" className="text-primary hover:underline">
+                      Contact form →
+                    </Link>
+                  </p>
+                  <p className="mt-1 text-xs break-all">{SITE_URL}/services/{service.slug}</p>
+                </div>
               </div>
             </div>
           </div>
@@ -224,7 +348,7 @@ export default async function ServiceDetailPage({ params }: Props) {
         <Container>
           <div className="text-center max-w-2xl mx-auto">
             <h2 className="text-3xl font-bold mb-6">
-              Don&apos;t wait. Book your {service.shortTitle || "clean"} today!
+              Book your {service.shortTitle} in Deltona today
             </h2>
             <Button size="lg" variant="secondary" asChild>
               <Link href="/#booking">Get Your Free Quote</Link>

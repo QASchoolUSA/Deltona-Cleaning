@@ -30,15 +30,16 @@ export function Hero() {
           <div className="max-w-xl lg:pt-2">
             <p className="section-eyebrow">Deltona, FL · Volusia County</p>
             <h1 className="mt-3 text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl lg:text-[3.25rem] lg:leading-[1.1]">
-              Professional House &amp; Commercial Cleaning in{" "}
-              <span className="text-primary">Deltona</span>
+              Professional Cleaning Services in{" "}
+              <span className="text-primary">Deltona, FL</span>
             </h1>
             <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
-              Trusted cleaning for homes, offices, and post-construction projects across{" "}
+              House, apartment, move-out, Airbnb, post-construction, office, and restaurant
+              cleaning for homeowners, property managers, hosts, and local businesses across{" "}
               <strong className="font-semibold text-foreground">
                 Deltona, DeBary, Orange City
               </strong>
-              , and nearby Volusia County communities.
+              , and Lake Helen.
             </p>
 
             <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-3">

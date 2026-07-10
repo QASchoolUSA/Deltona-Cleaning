@@ -16,14 +16,24 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
     template: `%s | ${SITE_NAME}`,
-    default: "House Cleaning in Deltona, FL | Licensed & Insured",
+    default: "Cleaning Services in Deltona, FL | Licensed & Insured",
   },
   description: SITE_DESCRIPTION,
+  keywords: [
+    "house cleaning Deltona FL",
+    "move out cleaning Deltona",
+    "Airbnb cleaning Deltona",
+    "apartment cleaning Deltona",
+    "post construction cleaning Deltona",
+    "office cleaning Deltona",
+    "restaurant cleaning Deltona",
+    "maid service Deltona",
+  ],
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    title: "House Cleaning in Deltona, FL | Deltona Cleaning",
+    title: "Cleaning Services in Deltona, FL | Deltona Cleaning",
     description: SITE_DESCRIPTION,
     url: "/",
     siteName: SITE_NAME,
@@ -32,7 +42,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "House Cleaning in Deltona, FL | Deltona Cleaning",
+    title: "Cleaning Services in Deltona, FL | Deltona Cleaning",
     description: SITE_DESCRIPTION,
   },
   robots: {
