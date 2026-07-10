@@ -174,6 +174,7 @@ export function buildSiteGraph() {
 }
 
 export function buildServiceSchema(service: Service) {
+  const imagePath = `/images/services/${service.slug}.jpg`;
   return {
     "@context": "https://schema.org",
     "@type": "Service",
@@ -182,6 +183,7 @@ export function buildServiceSchema(service: Service) {
     serviceType: service.shortTitle,
     description: service.description,
     url: `${SITE_URL}/services/${service.slug}`,
+    image: `${SITE_URL}${imagePath}`,
     provider: { "@id": `${SITE_URL}/#business` },
     areaServed: areaServed,
     audience: service.audiences.map((name) => ({

@@ -1,6 +1,7 @@
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import Image from "next/image";
 import dynamic from "next/dynamic";
 import { Check, ArrowLeft, CheckCircle2, HelpCircle } from "lucide-react";
 import { getServiceBySlug, services } from "@/lib/data";
@@ -13,6 +14,8 @@ import {
   buildFaqSchema,
   buildServiceSchema,
 } from "@/lib/seo/schema";
+import { getServiceImage } from "@/lib/images";
+import { CardThumb } from "@/components/ui/content-image";
 
 const BookingWidget = dynamic(() => import("@/components/BookingWidget"), {
   loading: () => (
@@ -35,6 +38,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const title = `${service.shortTitle} in Deltona, FL`;
   const description = service.description;
   const path = `/services/${service.slug}`;
+  const image = getServiceImage(service.slug);
 
   return {
     title,
@@ -45,11 +49,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description,
       url: path,
       type: "website",
+      images: [{ url: image.src, alt: image.alt }],
     },
     twitter: {
       card: "summary_large_image",
       title: `${title} | ${SITE_NAME}`,
       description,
+      images: [image.src],
     },
   };
 }
@@ -72,6 +78,7 @@ export default async function ServiceDetailPage({ params }: Props) {
     .map((relatedSlug) => getServiceBySlug(relatedSlug))
     .filter(Boolean);
 
+  const image = getServiceImage(service.slug);
   const serviceSchema = buildServiceSchema(service);
   const faqSchema = buildFaqSchema(service.faqs);
   const breadcrumbSchema = buildBreadcrumbSchema([
@@ -86,36 +93,43 @@ export default async function ServiceDetailPage({ params }: Props) {
       {faqSchema && <JsonLd data={faqSchema} />}
       <JsonLd data={breadcrumbSchema} />
 
-      <section className="bg-muted py-16 md:py-24">
-        <Container>
-          <div className="flex flex-col md:flex-row items-start justify-between gap-8">
-            <div className="max-w-2xl">
-              <Link
-                href="/services"
-                className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-primary mb-6"
-              >
-                <ArrowLeft className="mr-2 h-4 w-4" /> Back to Services
-              </Link>
-              <p className="text-sm font-medium text-primary mb-3">
-                Deltona, FL · {service.audiences.join(" · ")}
-              </p>
-              <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl mb-6">
-                {service.title}
-              </h1>
-              <p className="text-xl text-muted-foreground mb-8">{service.description}</p>
-              <div className="flex flex-wrap gap-4">
-                <Button size="lg" asChild>
-                  <Link href="/#booking">Get Your Free Quote</Link>
-                </Button>
-                <Button size="lg" variant="outline" asChild>
-                  <a href={SITE_PHONE_HREF}>Call {SITE_PHONE}</a>
-                </Button>
-              </div>
-            </div>
-            <div className="hidden md:flex flex-1 justify-center items-center">
-              <div className="bg-background/50 p-8 rounded-full">
-                <service.icon className="h-32 w-32 text-primary/20" />
-              </div>
+      <section className="relative overflow-hidden">
+        <div className="absolute inset-0">
+          <Image
+            src={image.src}
+            alt={image.alt}
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover"
+          />
+          <div
+            className="absolute inset-0 bg-gradient-to-r from-background via-background/90 to-background/55"
+            aria-hidden="true"
+          />
+        </div>
+        <Container className="relative py-16 md:py-24">
+          <div className="max-w-2xl">
+            <Link
+              href="/services"
+              className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-primary mb-6"
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" /> Back to Services
+            </Link>
+            <p className="text-sm font-medium text-primary mb-3">
+              Deltona, FL · {service.audiences.join(" · ")}
+            </p>
+            <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl mb-6">
+              {service.title}
+            </h1>
+            <p className="text-xl text-muted-foreground mb-8">{service.description}</p>
+            <div className="flex flex-wrap gap-4">
+              <Button size="lg" asChild>
+                <Link href="/#booking">Get Your Free Quote</Link>
+              </Button>
+              <Button size="lg" variant="outline" asChild>
+                <a href={SITE_PHONE_HREF}>Call {SITE_PHONE}</a>
+              </Button>
             </div>
           </div>
         </Container>
@@ -298,23 +312,28 @@ export default async function ServiceDetailPage({ params }: Props) {
                 <div>
                   <h2 className="text-3xl font-bold mb-6">Related Cleaning Services</h2>
                   <ul className="grid gap-4 sm:grid-cols-2">
-                    {related.map((item) =>
-                      item ? (
+                    {related.map((item) => {
+                      if (!item) return null;
+                      const relatedImage = getServiceImage(item.slug);
+                      return (
                         <li key={item.slug}>
                           <Link
                             href={`/services/${item.slug}`}
-                            className="block rounded-lg border p-4 hover:border-primary hover:bg-muted/40 transition-colors"
+                            className="group block overflow-hidden rounded-lg border hover:border-primary transition-colors"
                           >
-                            <span className="font-semibold text-foreground">
-                              {item.shortTitle} in Deltona
-                            </span>
-                            <p className="mt-1 text-sm text-muted-foreground line-clamp-2">
-                              {item.description}
-                            </p>
+                            <CardThumb src={relatedImage.src} alt={relatedImage.alt} />
+                            <div className="p-4">
+                              <span className="font-semibold text-foreground">
+                                {item.shortTitle} in Deltona
+                              </span>
+                              <p className="mt-1 text-sm text-muted-foreground line-clamp-2">
+                                {item.description}
+                              </p>
+                            </div>
                           </Link>
                         </li>
-                      ) : null
-                    )}
+                      );
+                    })}
                   </ul>
                 </div>
               )}

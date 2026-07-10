@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { Container } from "@/components/ui/container";
 import { blogPosts } from "@/lib/data";
-import { SITE_NAME } from "@/lib/site";
+import { SITE_NAME, SITE_URL } from "@/lib/site";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { buildBreadcrumbSchema, CORE_ENTITY } from "@/lib/seo/schema";
-import { SITE_URL } from "@/lib/site";
+import { pageImages } from "@/lib/images";
+import { CardThumb } from "@/components/ui/content-image";
 
 export const metadata: Metadata = {
   title: "Cleaning Guides for Deltona, FL",
@@ -18,6 +20,10 @@ export const metadata: Metadata = {
       "AEO-ready guides on move-out inspections, house cleaning, and commercial hygiene in Deltona and Volusia County.",
     url: "/blog",
   },
+};
+
+const postImages: Record<string, { src: string; alt: string }> = {
+  "deltona-move-out-cleaning-landlord-inspection-checklist": pageImages.blogMoveOut,
 };
 
 export default function BlogIndexPage() {
@@ -45,13 +51,29 @@ export default function BlogIndexPage() {
     },
   };
 
+  const hero = pageImages.blogIndex;
+
   return (
     <div className="flex flex-col">
       <JsonLd data={breadcrumb} />
       <JsonLd data={collectionSchema} />
 
-      <section className="bg-muted py-12 md:py-20">
-        <Container>
+      <section className="relative overflow-hidden">
+        <div className="absolute inset-0">
+          <Image
+            src={hero.src}
+            alt={hero.alt}
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover"
+          />
+          <div
+            className="absolute inset-0 bg-gradient-to-r from-background via-background/90 to-background/55"
+            aria-hidden="true"
+          />
+        </div>
+        <Container className="relative py-12 md:py-20">
           <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl mb-4">
             Cleaning Guides for Deltona, FL
           </h1>
@@ -65,20 +87,27 @@ export default function BlogIndexPage() {
       <section className="py-16 md:py-24">
         <Container>
           <ul className="grid gap-6 max-w-3xl">
-            {blogPosts.map((post) => (
-              <li key={post.slug}>
-                <Link
-                  href={`/blog/${post.slug}`}
-                  className="block rounded-lg border p-6 hover:border-primary hover:bg-muted/30 transition-colors"
-                >
-                  <p className="text-sm text-muted-foreground mb-2">
-                    Updated {post.dateModified}
-                  </p>
-                  <h2 className="text-xl font-bold mb-2">{post.title}</h2>
-                  <p className="text-muted-foreground">{post.description}</p>
-                </Link>
-              </li>
-            ))}
+            {blogPosts.map((post) => {
+              const image =
+                postImages[post.slug] ?? pageImages.blogIndex;
+              return (
+                <li key={post.slug}>
+                  <Link
+                    href={`/blog/${post.slug}`}
+                    className="group block overflow-hidden rounded-lg border hover:border-primary transition-colors"
+                  >
+                    <CardThumb src={image.src} alt={image.alt} />
+                    <div className="p-6">
+                      <p className="text-sm text-muted-foreground mb-2">
+                        Updated {post.dateModified}
+                      </p>
+                      <h2 className="text-xl font-bold mb-2">{post.title}</h2>
+                      <p className="text-muted-foreground">{post.description}</p>
+                    </div>
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         </Container>
       </section>

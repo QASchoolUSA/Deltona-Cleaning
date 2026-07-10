@@ -447,27 +447,29 @@ export default function BookingWidget({ className }: { className?: string }) {
         )}
 
         {step === 2 && (
-          <div className="grid gap-4 sm:grid-cols-2">
-            <label className="block">
-              <span className="mb-2 block text-sm font-medium text-foreground">Preferred date</span>
-              <input
-                type="date"
-                className="input-field"
-                value={date}
-                min={todayISO()}
-                onChange={(e) => setDate(e.target.value)}
-              />
-            </label>
-            <label className="block">
-              <span className="mb-2 block text-sm font-medium text-foreground">Preferred time</span>
-              <input
-                type="time"
-                className="input-field"
-                value={time}
-                onChange={(e) => setTime(e.target.value)}
-              />
-            </label>
-            <p className="text-xs leading-relaxed text-muted-foreground sm:col-span-2">
+          <div className="flex flex-col gap-5">
+            <div className="grid gap-5 sm:grid-cols-2 sm:gap-6">
+              <label className="flex flex-col gap-2">
+                <span className="text-sm font-medium text-foreground">Preferred date</span>
+                <input
+                  type="date"
+                  className="input-field"
+                  value={date}
+                  min={todayISO()}
+                  onChange={(e) => setDate(e.target.value)}
+                />
+              </label>
+              <label className="flex flex-col gap-2">
+                <span className="text-sm font-medium text-foreground">Preferred time</span>
+                <input
+                  type="time"
+                  className="input-field"
+                  value={time}
+                  onChange={(e) => setTime(e.target.value)}
+                />
+              </label>
+            </div>
+            <p className="text-xs leading-relaxed text-muted-foreground">
               Scheduling is optional but helps us confirm availability faster. We&apos;ll send a
               reminder before your appointment.
             </p>
