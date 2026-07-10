@@ -10,9 +10,12 @@ export function ServicesGrid() {
         <section className="py-16 md:py-24">
             <Container>
                 <div className="mb-12 text-center">
-                    <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Our Services</h2>
+                    <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+                        Cleaning Services in Deltona, FL
+                    </h2>
                     <p className="mt-4 text-lg text-muted-foreground">
-                        Comprehensive cleaning solutions tailored to your needs.
+                        Residential, vacancy, short-term rental, post-construction, and commercial
+                        cleaning for every Deltona audience.
                     </p>
                 </div>
                 <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -22,11 +25,13 @@ export function ServicesGrid() {
                                 <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
                                     <service.icon className="h-6 w-6" />
                                 </div>
-                                <CardTitle>{service.title}</CardTitle>
+                                <CardTitle>{service.shortTitle}</CardTitle>
                                 <CardDescription>{service.description}</CardDescription>
                             </CardHeader>
                             <CardContent className="flex-1">
-                                {/* Optional additional content */}
+                                <p className="text-xs text-muted-foreground">
+                                    For {service.audiences.join(", ")}
+                                </p>
                             </CardContent>
                             <CardFooter>
                                 <Button variant="ghost" className="w-full justify-start p-0 hover:bg-transparent hover:text-primary" asChild>

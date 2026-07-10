@@ -31,7 +31,8 @@ export function WhyChooseUs() {
                 <div className="mb-12 text-center">
                     <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Why Choose Deltona Cleaning?</h2>
                     <p className="mt-4 text-lg text-muted-foreground">
-                        We are dedicated to providing the best cleaning experience in Deltona.
+                        Checklist-driven residential and commercial cleaning for Deltona homeowners,
+                        property managers, hosts, and local businesses.
                     </p>
                 </div>
                 <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">

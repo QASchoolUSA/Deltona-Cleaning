@@ -10,6 +10,7 @@ import {
   SITE_REGION,
   SITE_URL,
 } from "@/lib/site";
+import type { Service } from "@/lib/data";
 
 /**
  * Core + sub-entities from the SEO/AEO/GEO blueprint (Phase 1).
@@ -68,6 +69,8 @@ const serviceOffers = [
   "Post-Construction Cleaning",
   "Commercial Office Cleaning",
   "Restaurant and Cafe Cleaning",
+  "Deep Cleaning",
+  "Maintenance Cleaning",
 ] as const;
 
 export function buildSiteGraph() {
@@ -170,6 +173,64 @@ export function buildSiteGraph() {
   };
 }
 
+export function buildServiceSchema(service: Service) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "@id": `${SITE_URL}/services/${service.slug}#service`,
+    name: service.title,
+    serviceType: service.shortTitle,
+    description: service.description,
+    url: `${SITE_URL}/services/${service.slug}`,
+    provider: { "@id": `${SITE_URL}/#business` },
+    areaServed: areaServed,
+    audience: service.audiences.map((name) => ({
+      "@type": "Audience",
+      audienceType: name,
+    })),
+    about: [
+      thing(CORE_ENTITY),
+      thing(service.shortTitle),
+      place("Deltona, FL"),
+    ],
+    mentions: [
+      ...service.audiences.map(thing),
+      place("Volusia County, Florida"),
+    ],
+  };
+}
+
+export function buildFaqSchema(faqs: { question: string; answer: string }[]) {
+  if (!faqs.length) return null;
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((faq) => ({
+      "@type": "Question",
+      name: faq.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: faq.answer,
+      },
+    })),
+  };
+}
+
+export function buildBreadcrumbSchema(
+  items: { name: string; path: string }[]
+) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.name,
+      item: item.path.startsWith("http") ? item.path : `${SITE_URL}${item.path}`,
+    })),
+  };
+}
+
 export function buildMoveOutTechArticleSchema(opts?: {
   url?: string;
   datePublished?: string;
@@ -227,5 +288,56 @@ export function buildMoveOutTechArticleSchema(opts?: {
     proficiencyLevel: "Expert",
     dependencies:
       "Local knowledge of Deltona and Volusia County rental inspection practices",
+  };
+}
+
+export function buildAboutPageSchema() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "AboutPage",
+    "@id": `${SITE_URL}/about#webpage`,
+    url: `${SITE_URL}/about`,
+    name: `About ${SITE_NAME}`,
+    description: `${SITE_NAME} is a licensed and insured cleaning company serving Deltona, DeBary, Orange City, and Lake Helen.`,
+    isPartOf: { "@id": `${SITE_URL}/#website` },
+    about: { "@id": `${SITE_URL}/#organization` },
+    mainEntity: { "@id": `${SITE_URL}/#business` },
+  };
+}
+
+export function buildContactPageSchema() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ContactPage",
+    "@id": `${SITE_URL}/contact#webpage`,
+    url: `${SITE_URL}/contact`,
+    name: `Contact ${SITE_NAME}`,
+    description: `Request a free cleaning quote in Deltona, FL. Call ${SITE_PHONE} or send a request online.`,
+    isPartOf: { "@id": `${SITE_URL}/#website` },
+    about: { "@id": `${SITE_URL}/#business` },
+    mainEntity: { "@id": `${SITE_URL}/#business` },
+  };
+}
+
+export function buildServicesCollectionSchema(serviceList: Service[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "@id": `${SITE_URL}/services#webpage`,
+    url: `${SITE_URL}/services`,
+    name: "Cleaning Services in Deltona, FL",
+    description:
+      "House cleaning, move-out cleaning, Airbnb cleaning, post-construction, office, and restaurant cleaning across Deltona and Volusia County.",
+    isPartOf: { "@id": `${SITE_URL}/#website` },
+    about: thing(CORE_ENTITY),
+    mainEntity: {
+      "@type": "ItemList",
+      itemListElement: serviceList.map((service, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        url: `${SITE_URL}/services/${service.slug}`,
+        name: service.title,
+      })),
+    },
   };
 }
