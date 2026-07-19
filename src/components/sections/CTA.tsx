@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Container } from "@/components/ui/container"
+import { SITE_PHONE, SITE_PHONE_HREF } from "@/lib/site"
 
 export function CTA() {
     return (
@@ -16,7 +17,7 @@ export function CTA() {
                             <Link href="/#booking">Get Your Free Quote</Link>
                         </Button>
                         <Button size="lg" variant="outline" className="bg-transparent text-primary-foreground border-primary-foreground hover:bg-primary-foreground hover:text-primary" asChild>
-                            <Link href="tel:+16893882588">Call (689) 388-2588</Link>
+                            <Link href={SITE_PHONE_HREF}>Call {SITE_PHONE}</Link>
                         </Button>
                     </div>
                 </div>

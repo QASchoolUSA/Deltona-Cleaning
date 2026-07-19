@@ -202,6 +202,22 @@ export function buildServiceSchema(service: Service) {
   };
 }
 
+export function buildHowToSchema(service: Service) {
+  if (!service.process?.length) return null;
+  return {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    name: `How ${service.title} works`,
+    description: service.description,
+    step: service.process.map((step, idx) => ({
+      "@type": "HowToStep",
+      position: idx + 1,
+      name: step.title,
+      text: step.description,
+    })),
+  };
+}
+
 export function buildFaqSchema(faqs: { question: string; answer: string }[]) {
   if (!faqs.length) return null;
   return {

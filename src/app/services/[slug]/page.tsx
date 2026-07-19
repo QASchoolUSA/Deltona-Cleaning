@@ -12,6 +12,7 @@ import { SITE_NAME, SITE_PHONE, SITE_PHONE_HREF, SITE_URL } from "@/lib/site";
 import {
   buildBreadcrumbSchema,
   buildFaqSchema,
+  buildHowToSchema,
   buildServiceSchema,
 } from "@/lib/seo/schema";
 import { getServiceImage } from "@/lib/images";
@@ -81,6 +82,7 @@ export default async function ServiceDetailPage({ params }: Props) {
   const image = getServiceImage(service.slug);
   const serviceSchema = buildServiceSchema(service);
   const faqSchema = buildFaqSchema(service.faqs);
+  const howToSchema = buildHowToSchema(service);
   const breadcrumbSchema = buildBreadcrumbSchema([
     { name: "Home", path: "/" },
     { name: "Services", path: "/services" },
@@ -91,6 +93,7 @@ export default async function ServiceDetailPage({ params }: Props) {
     <div className="flex flex-col">
       <JsonLd data={serviceSchema} />
       {faqSchema && <JsonLd data={faqSchema} />}
+      {howToSchema && <JsonLd data={howToSchema} />}
       <JsonLd data={breadcrumbSchema} />
 
       <section className="relative overflow-hidden">

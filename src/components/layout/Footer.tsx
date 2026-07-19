@@ -49,8 +49,13 @@ export function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/guides" className="hover:text-primary">
+                  Local Guides
+                </Link>
+              </li>
+              <li>
                 <Link href="/blog" className="hover:text-primary">
-                  Cleaning Guides
+                  Cleaning Blog
                 </Link>
               </li>
               <li>
