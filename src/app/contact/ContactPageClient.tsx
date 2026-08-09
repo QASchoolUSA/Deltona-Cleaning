@@ -29,6 +29,7 @@ export default function ContactPageClient() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [service, setService] = useState("house-cleaning");
+  const [address, setAddress] = useState("");
   const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -50,9 +51,10 @@ export default function ContactPageClient() {
           customer_name: `${firstName.trim()} ${lastName.trim()}`.trim(),
           email: email.trim(),
           phone: phone.trim(),
-          address: "Provided in message / to be confirmed",
+          address: address.trim() || undefined,
           service_type: `Contact form — ${serviceLabel}`,
           notes: message.trim() || undefined,
+          intent: "quote",
         }),
       });
 
@@ -176,6 +178,7 @@ export default function ContactPageClient() {
                         setLastName("");
                         setEmail("");
                         setPhone("");
+                        setAddress("");
                         setMessage("");
                         setService("house-cleaning");
                       }}
@@ -250,6 +253,22 @@ export default function ContactPageClient() {
                           </option>
                         ))}
                       </select>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="address">
+                        Service address{" "}
+                        <span className="font-normal text-muted-foreground">
+                          (optional)
+                        </span>
+                      </Label>
+                      <Input
+                        id="address"
+                        placeholder="1234 Providence Blvd, Deltona, FL"
+                        autoComplete="street-address"
+                        value={address}
+                        onChange={(e) => setAddress(e.target.value)}
+                      />
                     </div>
 
                     <div className="space-y-2">
