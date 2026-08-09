@@ -17,6 +17,8 @@ export async function POST(request: Request) {
       preferred_date: form.preferred_date,
       preferred_time: form.preferred_time,
       notes: form.notes,
+      property: form.property,
+      quote: form.quote,
     }),
   });
 
