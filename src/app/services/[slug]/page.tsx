@@ -17,6 +17,7 @@ import {
 } from "@/lib/seo/schema";
 import { getServiceImage } from "@/lib/images";
 import { CardThumb } from "@/components/ui/content-image";
+import { getPricingConfig } from "@/lib/pricing-config";
 
 const BookingWidget = dynamic(() => import("@/components/BookingWidget"), {
   loading: () => (
@@ -79,6 +80,7 @@ export default async function ServiceDetailPage({ params }: Props) {
     .map((relatedSlug) => getServiceBySlug(relatedSlug))
     .filter(Boolean);
 
+  const pricing = await getPricingConfig();
   const image = getServiceImage(service.slug);
   const serviceSchema = buildServiceSchema(service);
   const faqSchema = buildFaqSchema(service.faqs);
@@ -344,7 +346,7 @@ export default async function ServiceDetailPage({ params }: Props) {
 
             <div className="lg:col-span-1">
               <div className="sticky top-24 space-y-6">
-                <BookingWidget />
+                <BookingWidget config={pricing} />
                 <div className="rounded-lg border p-4 text-sm text-muted-foreground">
                   <p className="font-semibold text-foreground mb-2">Serving</p>
                   <p>Deltona, DeBary, Orange City, and Lake Helen, FL.</p>

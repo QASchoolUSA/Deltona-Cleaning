@@ -5,6 +5,7 @@ import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { pageImages } from "@/lib/images";
+import { getPricingConfig } from "@/lib/pricing-config";
 
 const BookingWidget = dynamic(() => import("@/components/BookingWidget"), {
   loading: () => (
@@ -21,8 +22,9 @@ const TRUST_ITEMS = [
   "Local Deltona Team",
 ];
 
-export function Hero() {
+export async function Hero() {
   const hero = pageImages.homeHero;
+  const pricing = await getPricingConfig();
 
   return (
     <section className="relative overflow-hidden">
@@ -87,7 +89,7 @@ export function Hero() {
           </div>
 
           <div id="booking" className="scroll-mt-24 lg:sticky lg:top-24">
-            <BookingWidget />
+            <BookingWidget config={pricing} />
           </div>
         </div>
       </Container>

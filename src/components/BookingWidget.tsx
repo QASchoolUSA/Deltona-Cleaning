@@ -4,13 +4,14 @@ import { useMemo, useState } from "react";
 import { Check, Shield, CreditCard } from "lucide-react";
 import PropertyDetailsStep from "@/components/PropertyDetailsStep";
 import {
-  ADDON_LABELS,
-  DEFAULT_SQFT_BAND,
+  ADDON_KEYS,
+  DEFAULT_PRICING_CONFIG,
+  addOnLabels,
   computeQuote,
   propertySummary,
   selectedAddOnLines,
   sqftBandLabel,
-  type AddOnKey,
+  type PricingConfig,
   type ServiceType,
   type SqftBand,
 } from "@/lib/pricing";
@@ -51,11 +52,17 @@ function todayISO() {
   return new Date().toISOString().split("T")[0];
 }
 
-export default function BookingWidget({ className }: { className?: string }) {
+export default function BookingWidget({
+  className,
+  config = DEFAULT_PRICING_CONFIG,
+}: {
+  className?: string;
+  config?: PricingConfig;
+}) {
   const [serviceType, setServiceType] = useState<ServiceType>("residential");
   const [bedrooms, setBedrooms] = useState(2);
   const [bathrooms, setBathrooms] = useState(2);
-  const [sqftBand, setSqftBand] = useState<SqftBand | null>(DEFAULT_SQFT_BAND);
+  const [sqftBand, setSqftBand] = useState<SqftBand | null>(config.defaultSqftBand);
   const [level, setLevel] = useState<LevelType>("standard");
   const [addOns, setAddOns] = useState({
     fridge: false,
@@ -83,11 +90,16 @@ export default function BookingWidget({ className }: { className?: string }) {
   }, [serviceType, level]);
 
   const quote = useMemo(
-    () => computeQuote({ serviceType, bedrooms, bathrooms, sqftBand, level: effectiveLevel, addOns }),
-    [serviceType, bedrooms, bathrooms, sqftBand, effectiveLevel, addOns]
+    () =>
+      computeQuote(
+        { serviceType, bedrooms, bathrooms, sqftBand, level: effectiveLevel, addOns },
+        config
+      ),
+    [serviceType, bedrooms, bathrooms, sqftBand, effectiveLevel, addOns, config]
   );
 
-  const sizeLabel = propertySummary({ serviceType, bedrooms, bathrooms, sqftBand });
+  const labels = useMemo(() => addOnLabels(config), [config]);
+  const sizeLabel = propertySummary({ serviceType, bedrooms, bathrooms, sqftBand }, config);
   const serviceLabel = SERVICE_OPTIONS.find((o) => o.value === serviceType)?.label ?? serviceType;
   const levelLabel =
     effectiveLevel === "move"
@@ -97,7 +109,7 @@ export default function BookingWidget({ className }: { className?: string }) {
         : effectiveLevel === "post"
           ? "Post-construction"
           : "Standard";
-  const addOnLines = selectedAddOnLines(addOns);
+  const addOnLines = selectedAddOnLines(addOns, config);
   const selectedAddOns = addOnLines.map((a) => a.label);
 
   function handleServiceTypeChange(next: ServiceType) {
@@ -185,7 +197,7 @@ export default function BookingWidget({ className }: { className?: string }) {
           property: {
             bedrooms: serviceType === "residential" ? bedrooms : undefined,
             bathrooms,
-            size_label: sqftBandLabel(sqftBand) ?? undefined,
+            size_label: sqftBandLabel(sqftBand, config) ?? undefined,
             home_type: serviceLabel,
           },
           quote: {
@@ -374,6 +386,7 @@ export default function BookingWidget({ className }: { className?: string }) {
             onBedroomsChange={setBedrooms}
             onBathroomsChange={setBathrooms}
             onSqftBandChange={setSqftBand}
+            config={config}
           />
         )}
 
@@ -403,7 +416,7 @@ export default function BookingWidget({ className }: { className?: string }) {
             <div>
               <p className="mb-3 text-sm font-medium text-foreground">Optional add‑ons</p>
               <div className="flex flex-wrap gap-2">
-                {(Object.keys(ADDON_LABELS) as AddOnKey[]).map((key) => (
+                {ADDON_KEYS.map((key) => (
                   <button
                     key={key}
                     type="button"
@@ -415,7 +428,7 @@ export default function BookingWidget({ className }: { className?: string }) {
                         : "bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary"
                     )}
                   >
-                    {ADDON_LABELS[key]}
+                    {labels[key]}
                   </button>
                 ))}
               </div>
