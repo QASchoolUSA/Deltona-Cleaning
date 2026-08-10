@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Mail, MapPin, Phone } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { services } from "@/lib/data";
@@ -15,7 +16,15 @@ export function Footer() {
       <Container className="py-12 md:py-16">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
           <div className="space-y-4">
-            <h3 className="text-lg font-bold text-foreground">{SITE_NAME}</h3>
+            <Link href="/" className="inline-flex">
+              <Image
+                src="/logo.svg"
+                alt={SITE_NAME}
+                width={200}
+                height={72}
+                className="h-12 w-auto object-contain"
+              />
+            </Link>
             <p className="text-sm">
               Professional house, move-out, Airbnb, post-construction, office, and restaurant
               cleaning in Deltona, FL and surrounding Volusia County communities.

@@ -92,7 +92,7 @@ export function buildSiteGraph() {
     url: SITE_URL,
     logo: {
       "@type": "ImageObject",
-      url: `${SITE_URL}/opengraph-image`,
+      url: `${SITE_URL}/logo.svg`,
     },
     email: SITE_EMAIL,
     telephone: SITE_PHONE,
@@ -283,7 +283,7 @@ export function buildMoveOutTechArticleSchema(opts?: {
       name: SITE_NAME,
       logo: {
         "@type": "ImageObject",
-        url: `${SITE_URL}/opengraph-image`,
+        url: `${SITE_URL}/logo.svg`,
       },
     },
     mainEntityOfPage: {

@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X, Phone } from "lucide-react";
@@ -28,10 +29,17 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <Container>
-        <div className="flex h-16 items-center justify-between">
-          <div className="flex items-center">
-            <Link href="/" className="flex items-center space-x-2">
-              <span className="text-xl font-bold text-primary">{SITE_NAME}</span>
+        <div className="flex h-20 items-center justify-between md:h-16">
+          <div className="flex min-w-0 items-center">
+            <Link href="/" className="flex min-w-0 items-center">
+              <Image
+                src="/logo.svg"
+                alt={SITE_NAME}
+                width={220}
+                height={80}
+                priority
+                className="h-14 w-auto max-w-[min(70vw,240px)] object-contain md:h-11"
+              />
             </Link>
           </div>
 
@@ -84,7 +92,7 @@ export function Header() {
       </Container>
 
       {isOpen && (
-        <div className="md:hidden absolute top-16 left-0 right-0 bg-background border-b shadow-lg">
+        <div className="md:hidden absolute top-20 left-0 right-0 bg-background border-b shadow-lg">
           <div className="space-y-1 px-4 pb-3 pt-2">
             {navigation.map((item) => (
               <Link
