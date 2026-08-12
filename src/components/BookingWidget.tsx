@@ -112,48 +112,80 @@ export default function BookingWidget({
   const addOnLines = selectedAddOnLines(addOns, config);
   const selectedAddOns = addOnLines.map((a) => a.label);
 
+  function buildPayload(intent: "quote" | "book") {
+    return {
+      customer_name: name,
+      email,
+      phone,
+      address,
+      service_type: `${serviceLabel} — ${levelLabel}`,
+      preferred_date: date || undefined,
+      preferred_time: time || undefined,
+      intent,
+      property: {
+        bedrooms: serviceType === "residential" ? bedrooms : undefined,
+        bathrooms,
+        size_label: sqftBandLabel(sqftBand, config) ?? undefined,
+        home_type: serviceLabel,
+      },
+      quote: {
+        estimate: quote.price,
+        estimate_low: quote.range.low,
+        estimate_high: quote.range.high,
+        currency: "USD",
+        service_level: levelLabel,
+        add_ons: addOnLines,
+        payment_terms: "Due after cleaning is complete",
+      },
+    };
+  }
+
+  async function submitPayload(intent: "quote" | "book") {
+    const errors = validateContact(name, email, phone, address);
+    if (Object.keys(errors).length > 0) {
+      setContactErrors(errors);
+      setStep(CONTACT_STEP);
+      return;
+    }
+
+    setSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      const res = await fetch("/api/book", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(buildPayload(intent)),
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error ?? "Request failed");
+      }
+
+      setBooked(true);
+    } catch (err) {
+      setSubmitError(
+        err instanceof Error
+          ? err.message
+          : "Something went wrong. Please try again or call us.",
+      );
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  function handleBook() {
+    return submitPayload("book");
+  }
+
+  function handleQuoteRequest() {
+    return submitPayload("quote");
+  }
+
   function handleServiceTypeChange(next: ServiceType) {
     setServiceType(next);
   }
-
-  const mailto = useMemo(() => {
-    const subject = encodeURIComponent(
-      `Free Quote Request: ${serviceLabel} — ${sizeLabel} — Deltona Cleaning`
-    );
-    const body = encodeURIComponent(
-      `FREE QUOTE REQUEST\n` +
-        `Payment: Due after cleaning is complete\n\n` +
-        `SERVICE DETAILS\n` +
-        `Service: ${serviceLabel}\n` +
-        `Size: ${sizeLabel}\n` +
-        `Level: ${levelLabel}\n` +
-        `Add-ons: ${selectedAddOns.join(", ") || "None"}\n\n` +
-        `SCHEDULE\n` +
-        `Preferred date: ${date || "Flexible"}\n` +
-        `Preferred time: ${time || "Flexible"}\n\n` +
-        `CONTACT\n` +
-        `Name: ${name}\n` +
-        `Email: ${email}\n` +
-        `Phone: ${phone}\n` +
-        `Address: ${address}\n\n` +
-        `ESTIMATED PRICE\n` +
-        `$${quote.price} (range $${quote.range.low}–$${quote.range.high})\n\n` +
-        `Notes:`
-    );
-    return `mailto:${SITE_EMAIL}?subject=${subject}&body=${body}`;
-  }, [
-    serviceLabel,
-    sizeLabel,
-    levelLabel,
-    selectedAddOns,
-    date,
-    time,
-    name,
-    email,
-    phone,
-    address,
-    quote,
-  ]);
 
   function next() {
     if (step === CONTACT_STEP) {
@@ -169,60 +201,6 @@ export default function BookingWidget({
 
   function prev() {
     setStep((s) => Math.max(s - 1, 0));
-  }
-
-  async function handleBook() {
-    const errors = validateContact(name, email, phone, address);
-    if (Object.keys(errors).length > 0) {
-      setContactErrors(errors);
-      setStep(CONTACT_STEP);
-      return;
-    }
-
-    setSubmitting(true);
-    setSubmitError(null);
-
-    try {
-      const res = await fetch("/api/book", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          customer_name: name,
-          email,
-          phone,
-          address,
-          service_type: `${serviceLabel} — ${levelLabel}`,
-          preferred_date: date || undefined,
-          preferred_time: time || undefined,
-          property: {
-            bedrooms: serviceType === "residential" ? bedrooms : undefined,
-            bathrooms,
-            size_label: sqftBandLabel(sqftBand, config) ?? undefined,
-            home_type: serviceLabel,
-          },
-          quote: {
-            estimate: quote.price,
-            estimate_low: quote.range.low,
-            estimate_high: quote.range.high,
-            currency: "USD",
-            service_level: levelLabel,
-            add_ons: addOnLines,
-            payment_terms: "Due after cleaning is complete",
-          },
-        }),
-      });
-
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.error ?? "Booking failed");
-      }
-
-      setBooked(true);
-    } catch (err) {
-      setSubmitError(err instanceof Error ? err.message : "Booking failed. Please try again or call us.");
-    } finally {
-      setSubmitting(false);
-    }
   }
 
   function resetWidget() {
@@ -650,23 +628,15 @@ export default function BookingWidget({
           <div className="order-1 flex flex-col gap-2 sm:order-2 sm:flex-row sm:justify-end">
             <button
               type="button"
-              className="btn-booking-ghost px-4 py-2.5 text-sm"
+              className="btn-booking-primary px-4 py-2.5 text-sm disabled:opacity-60"
               disabled={submitting}
-              onClick={() => {
-                const errors = validateContact(name, email, phone, address);
-                if (Object.keys(errors).length > 0) {
-                  setContactErrors(errors);
-                  setStep(CONTACT_STEP);
-                  return;
-                }
-                window.location.href = mailto;
-              }}
+              onClick={handleQuoteRequest}
             >
-              Email quote
+              {submitting ? "Sending…" : "Request quote"}
             </button>
             <button
               type="button"
-              className="btn-booking-primary px-4 py-2.5 text-sm disabled:opacity-60"
+              className="btn-booking-ghost px-4 py-2.5 text-sm disabled:opacity-60"
               onClick={handleBook}
               disabled={submitting}
             >
