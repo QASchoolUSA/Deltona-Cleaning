@@ -1,0 +1,42 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"main": "worker.ts",
+	"name": "deltona-cleaning",
+	"compatibility_date": "2026-07-15",
+	"compatibility_flags": [
+		"nodejs_compat"
+	],
+	"assets": {
+		"directory": ".open-next/assets",
+		"binding": "ASSETS"
+	},
+	"services": [
+		{
+			"binding": "WORKER_SELF_REFERENCE",
+			"service": "deltona-cleaning"
+		}
+	],
+	"images": {
+		"binding": "IMAGES"
+	},
+	"observability": {
+		"enabled": true
+	},
+	"triggers": {
+		"crons": [
+			"*/5 * * * *"
+		]
+	},
+	"kv_namespaces": [
+		{
+			// CF namespace title: BOOKING_OUTBOX_DELTONA
+			"binding": "BOOKING_OUTBOX",
+			"id": "1661f18d80dc462580775830c8be5c97"
+		}
+	],
+	"vars": {
+		"BOOKING_BROOM_URL": "https://app.bookingbroom.com",
+		"BOOKING_BROOM_SITE_SLUG": "deltona",
+		"NEXT_PUBLIC_SITE_URL": "https://deltonacleaning.com"
+	}
+}
