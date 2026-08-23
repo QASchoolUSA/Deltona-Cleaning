@@ -182,12 +182,12 @@ async function forwardPayloadToBookingBroom(
   payload: Record<string, unknown>,
   idempotencyKey: string,
 ): Promise<{ ok: true; id?: string } | { ok: false; error: string }> {
-  const baseUrl = env.BOOKING_BROOM_URL?.replace(/\/$/, "");
+  const baseUrl = (env.BOOKING_BROOM_URL || "https://app.bookingbroom.com").replace(/\/$/, "");
   const apiKey = env.BOOKING_BROOM_API_KEY;
   const siteSlug = env.BOOKING_BROOM_SITE_SLUG || "deltona";
 
   if (!baseUrl || !apiKey) {
-    return { ok: false, error: "BOOKING_BROOM_URL / BOOKING_BROOM_API_KEY not set" };
+    return { ok: false, error: "BOOKING_BROOM_API_KEY not set" };
   }
 
   try {

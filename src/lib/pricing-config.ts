@@ -17,7 +17,7 @@ import {
 const REVALIDATE_SECONDS = 300;
 
 export async function getPricingConfig(): Promise<PricingConfig> {
-  const baseUrl = process.env.BOOKING_BROOM_URL;
+  const baseUrl = process.env.BOOKING_BROOM_URL || "https://app.bookingbroom.com";
   const apiKey = process.env.BOOKING_BROOM_API_KEY;
   if (!baseUrl || !apiKey) return DEFAULT_PRICING_CONFIG;
 

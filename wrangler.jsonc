@@ -35,7 +35,6 @@
 		}
 	],
 	"vars": {
-		"BOOKING_BROOM_URL": "https://app.bookingbroom.com",
 		"BOOKING_BROOM_SITE_SLUG": "deltona",
 		"NEXT_PUBLIC_SITE_URL": "https://deltonacleaning.com"
 	}
