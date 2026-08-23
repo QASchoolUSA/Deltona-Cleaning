@@ -24,7 +24,7 @@ export async function getPricingConfig(): Promise<PricingConfig> {
   try {
     const res = await fetch(`${baseUrl}/api/pricing`, {
       headers: {
-        "X-Site-Slug": process.env.BOOKING_BROOM_SITE_SLUG ?? "deltona",
+        "X-Site-Slug": "deltona",
         "X-Api-Key": apiKey,
       },
       next: { revalidate: REVALIDATE_SECONDS },
