@@ -14,7 +14,7 @@ import {
  */
 
 /** Seconds a fetched config is reused before Next revalidates it. */
-const REVALIDATE_SECONDS = 300;
+const REVALIDATE_SECONDS = 45;
 
 export async function getPricingConfig(): Promise<PricingConfig> {
   const baseUrl = process.env.BOOKING_BROOM_URL || "https://app.bookingbroom.com";
