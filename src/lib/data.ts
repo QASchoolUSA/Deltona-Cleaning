@@ -113,7 +113,7 @@ export const services: Service[] = [
       {
         question: "How much does house cleaning cost in Deltona, FL?",
         answer:
-          "Most Deltona homes start around $99–$199 for a standard clean depending on bedrooms and condition. Deep cleans and add-ons (inside oven, fridge, cabinets) increase the total. Use our online quote tool for an instant range, then we confirm after reviewing your home details.",
+          "Most Deltona homes start from $129 for house cleaning before bedrooms, bathrooms, and square footage. Deep cleans start from $199. Use our online quote tool for an instant estimate, then we confirm after reviewing your home details.",
       },
       {
         question: "How often should a Deltona home get professionally cleaned?",

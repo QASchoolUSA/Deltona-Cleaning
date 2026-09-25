@@ -7,25 +7,31 @@ import PropertyDetailsStep from "@/components/PropertyDetailsStep";
 import {
   ADDON_KEYS,
   DEFAULT_PRICING_CONFIG,
+  SERVICE_LABELS,
   addOnLabels,
   computeQuote,
+  frequencyDiscountLabels,
+  frequencyLabels,
   propertySummary,
   selectedAddOnLines,
-  sqftBandLabel,
+  sqftPresetLabel,
+  type AddonId,
+  type FrequencyId,
   type PricingConfig,
-  type ServiceType,
-  type SqftBand,
+  type ServiceTypeId,
 } from "@/lib/pricing";
 import { cn } from "@/lib/utils";
 import { SITE_EMAIL, SITE_PHONE, SITE_PHONE_HREF } from "@/lib/site";
 
-const SERVICE_OPTIONS: { value: ServiceType; label: string; desc: string }[] = [
-  { value: "residential", label: "Residential", desc: "Homes & apartments" },
-  { value: "commercial", label: "Commercial", desc: "Offices & retail" },
+const SERVICE_OPTIONS: { value: ServiceTypeId; label: string; desc: string }[] = [
+  { value: "house", label: "House Cleaning", desc: "Homes & townhouses" },
+  { value: "apartment", label: "Apartment", desc: "Condos & rentals" },
+  { value: "maintenance", label: "Maintenance", desc: "Recurring upkeep" },
+  { value: "deep", label: "Deep Clean", desc: "Thorough reset" },
+  { value: "move", label: "Move-in / out", desc: "Empty-home cleans" },
+  { value: "airbnb", label: "Airbnb", desc: "Short-term turnovers" },
   { value: "post-construction", label: "Post‑Construction", desc: "Dust & debris cleanup" },
 ];
-
-type LevelType = "standard" | "deep" | "move" | "post";
 
 const STEPS = ["Service", "Home", "Options", "Schedule", "Contact", "Review"] as const;
 const CONTACT_STEP = 4;
@@ -64,18 +70,12 @@ export default function BookingWidget({
   if (!softLead.current) {
     softLead.current = createSoftLeadTracker();
   }
-  const [serviceType, setServiceType] = useState<ServiceType>("residential");
+  const [serviceType, setServiceType] = useState<ServiceTypeId>("house");
   const [bedrooms, setBedrooms] = useState(2);
   const [bathrooms, setBathrooms] = useState(2);
-  const [sqftBand, setSqftBand] = useState<SqftBand | null>(config.defaultSqftBand);
-  const [level, setLevel] = useState<LevelType>("standard");
-  const [addOns, setAddOns] = useState({
-    fridge: false,
-    oven: false,
-    windows: false,
-    cabinets: false,
-    baseboards: false,
-  });
+  const [sqft, setSqft] = useState(config.sqftPresets[1]?.value ?? 1000);
+  const [frequency, setFrequency] = useState<FrequencyId>("one-time");
+  const [addons, setAddons] = useState<AddonId[]>([]);
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [name, setName] = useState("");
@@ -88,34 +88,31 @@ export default function BookingWidget({
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [contactErrors, setContactErrors] = useState<ContactErrors>({});
 
-  const effectiveLevel: LevelType = useMemo(() => {
-    if (serviceType === "post-construction") return "post";
-    if (level === "post") return "standard";
-    return level;
-  }, [serviceType, level]);
-
   const quote = useMemo(
     () =>
       computeQuote(
-        { serviceType, bedrooms, bathrooms, sqftBand, level: effectiveLevel, addOns },
+        { serviceType, bedrooms, bathrooms, sqft, frequency, addons },
         config
       ),
-    [serviceType, bedrooms, bathrooms, sqftBand, effectiveLevel, addOns, config]
+    [serviceType, bedrooms, bathrooms, sqft, frequency, addons, config]
   );
 
   const labels = useMemo(() => addOnLabels(config), [config]);
-  const sizeLabel = propertySummary({ serviceType, bedrooms, bathrooms, sqftBand }, config);
-  const serviceLabel = SERVICE_OPTIONS.find((o) => o.value === serviceType)?.label ?? serviceType;
-  const levelLabel =
-    effectiveLevel === "move"
-      ? "Move‑in/out"
-      : effectiveLevel === "deep"
-        ? "Deep clean"
-        : effectiveLevel === "post"
-          ? "Post-construction"
-          : "Standard";
-  const addOnLines = selectedAddOnLines(addOns, config);
+  const freqLabels = useMemo(() => frequencyLabels(config), [config]);
+  const freqDiscounts = useMemo(() => frequencyDiscountLabels(config), [config]);
+  const sizeLabel = propertySummary({ bedrooms, bathrooms, sqft }, config);
+  const serviceLabel =
+    SERVICE_OPTIONS.find((o) => o.value === serviceType)?.label ??
+    SERVICE_LABELS[serviceType];
+  const frequencyLabel = freqLabels[frequency];
+  const addOnLines = selectedAddOnLines(addons, config);
   const selectedAddOns = addOnLines.map((a) => a.label);
+
+  function toggleAddon(key: AddonId) {
+    setAddons((prev) =>
+      prev.includes(key) ? prev.filter((id) => id !== key) : [...prev, key]
+    );
+  }
 
   function buildPayload(intent: "quote" | "book") {
     return {
@@ -123,15 +120,15 @@ export default function BookingWidget({
       email,
       phone,
       address,
-      service_type: `${serviceLabel} — ${levelLabel}`,
+      service_type: `${serviceLabel} — ${frequencyLabel}`,
       preferred_date: date || undefined,
       preferred_time: time || undefined,
       intent,
       session_key: softLead.current?.sessionKey,
       property: {
-        bedrooms: serviceType === "residential" ? bedrooms : undefined,
+        bedrooms,
         bathrooms,
-        size_label: sqftBandLabel(sqftBand, config) ?? undefined,
+        size_label: sqftPresetLabel(sqft, config),
         home_type: serviceLabel,
       },
       quote: {
@@ -139,7 +136,7 @@ export default function BookingWidget({
         estimate_low: quote.range.low,
         estimate_high: quote.range.high,
         currency: "USD",
-        service_level: levelLabel,
+        frequency: frequencyLabel,
         add_ons: addOnLines,
         payment_terms: "Due after cleaning is complete",
       },
@@ -172,12 +169,10 @@ export default function BookingWidget({
     serviceType,
     bedrooms,
     bathrooms,
-    sqftBand,
-    effectiveLevel,
-    addOns,
+    sqft,
+    frequency,
+    addons,
     quote.price,
-    quote.range.low,
-    quote.range.high,
   ]);
 
   async function submitPayload(intent: "quote" | "book") {
@@ -223,7 +218,7 @@ export default function BookingWidget({
     return submitPayload("quote");
   }
 
-  function handleServiceTypeChange(next: ServiceType) {
+  function handleServiceTypeChange(next: ServiceTypeId) {
     setServiceType(next);
   }
 
@@ -363,7 +358,7 @@ export default function BookingWidget({
           <div className="space-y-5">
             <div>
               <p className="mb-3 text-sm font-medium text-foreground">What type of cleaning?</p>
-              <div className="grid gap-2">
+              <div className="grid gap-2 sm:grid-cols-2">
                 {SERVICE_OPTIONS.map((opt) => (
                   <button
                     key={opt.value}
@@ -397,13 +392,12 @@ export default function BookingWidget({
 
         {step === 1 && (
           <PropertyDetailsStep
-            serviceType={serviceType}
             bedrooms={bedrooms}
             bathrooms={bathrooms}
-            sqftBand={sqftBand}
+            sqft={sqft}
             onBedroomsChange={setBedrooms}
             onBathroomsChange={setBathrooms}
-            onSqftBandChange={setSqftBand}
+            onSqftChange={setSqft}
             config={config}
           />
         )}
@@ -411,25 +405,24 @@ export default function BookingWidget({
         {step === 2 && (
           <div className="space-y-5">
             <div>
-              <label htmlFor="cleaning-level" className="mb-2 block text-sm font-medium text-foreground">
-                Cleaning level
+              <label htmlFor="cleaning-frequency" className="mb-2 block text-sm font-medium text-foreground">
+                How often?
               </label>
               <select
-                id="cleaning-level"
+                id="cleaning-frequency"
                 className="select-field"
-                value={effectiveLevel === "post" ? "standard" : effectiveLevel}
-                onChange={(e) => setLevel(e.target.value as LevelType)}
-                disabled={serviceType === "post-construction"}
+                value={frequency}
+                onChange={(e) => setFrequency(e.target.value as FrequencyId)}
               >
-                <option value="standard">Standard</option>
-                <option value="deep">Deep clean</option>
-                <option value="move">Move‑in / move‑out</option>
+                {config.frequencyMultipliers.map((freq) => (
+                  <option key={freq.key} value={freq.key}>
+                    {freq.label}
+                    {freqDiscounts[freq.key as FrequencyId]
+                      ? ` (${freqDiscounts[freq.key as FrequencyId]})`
+                      : ""}
+                  </option>
+                ))}
               </select>
-              {serviceType === "post-construction" && (
-                <p className="mt-2 text-xs text-muted-foreground">
-                  Post-construction cleaning uses a specialized detailing level automatically.
-                </p>
-              )}
             </div>
             <div>
               <p className="mb-3 text-sm font-medium text-foreground">Optional add‑ons</p>
@@ -438,10 +431,10 @@ export default function BookingWidget({
                   <button
                     key={key}
                     type="button"
-                    onClick={() => setAddOns({ ...addOns, [key]: !addOns[key] })}
+                    onClick={() => toggleAddon(key)}
                     className={cn(
                       "rounded-full px-3.5 py-2 text-xs font-medium transition-all sm:text-sm",
-                      addOns[key]
+                      addons.includes(key)
                         ? "bg-primary text-primary-foreground shadow-sm"
                         : "bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary"
                     )}
@@ -586,8 +579,8 @@ export default function BookingWidget({
                   <dd className="text-right font-medium text-foreground">{sizeLabel}</dd>
                 </div>
                 <div className="flex justify-between gap-4">
-                  <dt className="text-muted-foreground">Level</dt>
-                  <dd className="font-medium text-foreground">{levelLabel}</dd>
+                  <dt className="text-muted-foreground">Frequency</dt>
+                  <dd className="font-medium text-foreground">{frequencyLabel}</dd>
                 </div>
                 <div className="flex justify-between gap-4">
                   <dt className="text-muted-foreground">Add‑ons</dt>
