@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Container } from "@/components/ui/container";
 import { SITE_EMAIL, SITE_NAME, SITE_PHONE } from "@/lib/site";
 
@@ -27,6 +28,14 @@ export default function PrivacyPage() {
             {SITE_NAME} (&quot;we,&quot; &quot;us,&quot; or &quot;our&quot;) respects your privacy. This
             policy explains what information we collect when you use deltonacleaning.com or contact
             us for cleaning services, and how we use it.
+          </p>
+          <p>
+            Quote and booking details you share through our{" "}
+            <Link href="/contact" className="text-primary hover:underline">
+              contact form
+            </Link>{" "}
+            are used only to schedule and deliver residential or commercial cleaning—not for
+            unrelated marketing lists.
           </p>
 
           <h2 className="text-2xl font-bold text-foreground">Information we collect</h2>

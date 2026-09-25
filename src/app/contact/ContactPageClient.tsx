@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -81,6 +82,29 @@ export default function ContactPageClient() {
           <p className="text-lg text-muted-foreground max-w-2xl">
             Request a quote for house, move-out, Airbnb, post-construction, office, or
             restaurant cleaning across {SITE_AREAS.join(", ")}.
+          </p>
+          <p className="mt-4 text-muted-foreground max-w-2xl">
+            Most Deltona homeowners and landlords ask about{" "}
+            <Link href="/services/house-cleaning" className="font-medium text-primary hover:underline">
+              recurring house cleaning
+            </Link>
+            ,{" "}
+            <Link href="/services/deep-cleaning" className="font-medium text-primary hover:underline">
+              deep cleaning
+            </Link>
+            , or{" "}
+            <Link href="/services/move-out-cleaning" className="font-medium text-primary hover:underline">
+              move-out cleaning
+            </Link>
+            . Prefer to research first? Browse our{" "}
+            <Link href="/guides" className="font-medium text-primary hover:underline">
+              local guides
+            </Link>{" "}
+            and{" "}
+            <Link href="/blog" className="font-medium text-primary hover:underline">
+              blog
+            </Link>
+            , then send the form below with your address and preferred date.
           </p>
         </Container>
       </section>
