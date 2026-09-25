@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Container } from "@/components/ui/container";
 import { SITE_EMAIL, SITE_NAME, SITE_PHONE } from "@/lib/site";
 
@@ -26,6 +27,18 @@ export default function TermsPage() {
           <p>
             By using deltonacleaning.com or booking services with {SITE_NAME}, you agree to these
             terms. If you do not agree, please do not use our website or services.
+          </p>
+          <p>
+            Service scope and expectations for house, deep, and move-out cleans are described on
+            our{" "}
+            <Link href="/services" className="text-primary hover:underline">
+              services pages
+            </Link>
+            . Questions before you book can go through{" "}
+            <Link href="/contact" className="text-primary hover:underline">
+              contact
+            </Link>
+            .
           </p>
 
           <h2 className="text-2xl font-bold text-foreground">Quotes and bookings</h2>
